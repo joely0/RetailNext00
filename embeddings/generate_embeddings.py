@@ -16,8 +16,7 @@ from tenacity import retry, wait_random_exponential, stop_after_attempt
 
 # Local config
 from config import EMBEDDING_MODEL, EMBEDDING_COST_PER_1K_TOKENS
-from embed_samples_load import styles_df
-
+from embeddings.embed_samples_load import styles_df
 
 # Initialize OpenAI client 
 client = OpenAI()
