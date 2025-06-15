@@ -1,19 +1,25 @@
-# Standard library
-import numpy as np
+"""
+search_similar_items.py
+Contains functions for generating embeddings using OpenAI (text-embedding-3-large) and retrieving top-matching items
+based on cosine similarity. Forms the retrieval layer in the GPT-4o mini + RAG pipeline.
+"""
+
+# Standard library imports
 from typing import List
 
-# Third-party libraries
+# 3P Imports
+import numpy as np
 from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 
-# OpenAI setup
+# Local application imports
+from config import EMBEDDING_MODEL
+
+# Initialize OpenAI client
 client = OpenAI()
-EMBEDDING_MODEL = "text-embedding-3-large"
 
 # Retry-enabled embedding function
 @retry(wait=wait_random_exponential(min=1, max=40), stop=stop_after_attempt(10))
-
-
 
 def get_embeddings(input: List):
     response = client.embeddings.create(
@@ -23,10 +29,12 @@ def get_embeddings(input: List):
     return [data.embedding for data in response]
 
 
-#Includes matching algorithm
+# Includes matching algorithm. Math - cosine similarity function]
 
 def cosine_similarity_manual(vec1, vec2):
-    """Calculate the cosine similarity between two vectors."""
+    """
+    Calculate the cosine similarity between two vectors.
+    """
     vec1 = np.array(vec1, dtype=float)
     vec2 = np.array(vec2, dtype=float)
 
@@ -38,7 +46,9 @@ def cosine_similarity_manual(vec1, vec2):
 
 
 def find_similar_items(input_embedding, embeddings, threshold=0.5, top_k=2):
-    """Find the most similar items based on cosine similarity."""
+    """
+    Find the most similar items based on cosine similarity.
+    """
     
     # Calculate cosine similarity between the input embedding and all other embeddings
     similarities = [(index, cosine_similarity_manual(input_embedding, vec)) for index, vec in enumerate(embeddings)]
@@ -54,7 +64,9 @@ def find_similar_items(input_embedding, embeddings, threshold=0.5, top_k=2):
 
 
 def find_matching_items_with_rag(df_items, item_descs):
-    """Take the input item descriptions and find the most similar items based on cosine similarity for each description."""
+    """
+    Take the input item descriptions and find the most similar items based on cosine similarity for each description.
+    """
 
     # Select the embeddings from the DataFrame
     embeddings = df_items['embeddings'].tolist()

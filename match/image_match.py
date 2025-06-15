@@ -1,3 +1,9 @@
+"""
+match_from_image.py
+Filters product catalog based on gender and category, then retrieves and displays visually similar items
+using embeddings and image captions generated from an input image.
+"""
+
 # Extract the relevant features from the analysis
 item_descs = image_analysis['items']
 item_category = image_analysis['category']
