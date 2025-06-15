@@ -1,24 +1,26 @@
-## Batch Embedding Logic
+"""
+generate_embeddings.py
+Generates OpenAI embeddings for a product catalog using the `text-embedding-3-large` model.
+"""
 
-#imports - not included in original file. 
-import pandas as pd
-import ast
-import tiktoken
+# Standard library
 import concurrent.futures
+from typing import List
+
+# 3P Imports
+import pandas as pd
+import tiktoken
+from tqdm import tqdm
 from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
-from typing import List
-from tqdm import tqdm
+
+# Local config
+from config import EMBEDDING_MODEL, EMBEDDING_COST_PER_1K_TOKENS
 from embed_samples_load import styles_df
 
 
-
-# Specify model and cost
+# Initialize OpenAI client 
 client = OpenAI()
-EMBEDDING_MODEL = "text-embedding-3-large"
-EMBEDDING_COST_PER_1K_TOKENS = 0.00013
-
-
 
 # Simple function to take in a list of text objects and return them as a list of embeddings
 @retry(wait=wait_random_exponential(min=1, max=40), stop=stop_after_attempt(10))
@@ -30,7 +32,7 @@ def get_embeddings(input: List):
     return [data.embedding for data in response]
 
 
-# Splits an iterable into batches of size n.
+# Splits an iterable into batches of size n. Allows for scale
 def batchify(iterable, n=1):
     l = len(iterable)
     for ndx in range(0, l, n):

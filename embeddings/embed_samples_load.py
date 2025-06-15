@@ -1,5 +1,9 @@
-#Loads and verifies the data set
+"""
+embed_samples_load.py
+Loads and verifies the clothing catalog from CSV for embedding and matching.
+"""
 
+# 3P Imports
 import pandas as pd
 
 styles_filepath = "data/sample_clothes/sample_styles.csv"

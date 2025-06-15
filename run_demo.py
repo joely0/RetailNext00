@@ -1,17 +1,17 @@
-# Encode .jpg images in base64
-
-import base64
-import pandas as pd
-import json
+# Standard Library Imports
 import ast
+import base64
+import json
 import os
-from analysis import analyze_image
+
+# 3P Imports
+import pandas as pd
 from IPython.display import Image, display, HTML
-from guardrails import check_match
-from search_similar_items import find_matching_items_with_rag
 
-
-
+# Local Application Imports
+from analysis import analyze_image
+from utils.guardrails import check_match
+from match.search_similar_items import find_matching_items_with_rag
 
 # Load the dataset with embeddings
 styles_df = pd.read_csv("data/sample_clothes/sample_styles_with_embeddings.csv", on_bad_lines="skip")
@@ -26,6 +26,8 @@ def encode_image_to_base64(image_path):
     with open(image_path, 'rb') as image_file:
         encoded_image = base64.b64encode(image_file.read())
         return encoded_image.decode('utf-8')
+
+## Test Prompt including sample images
 
 # Set the path to the images and select a test image
 image_path = "../openai-cookbook/examples/data/sample_clothes/sample_images/"

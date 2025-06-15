@@ -1,7 +1,21 @@
+"""
+analysis.py
+This module defines the `analyze_image` function, which uses OpenAI's GPT-4o mini 
+API to analyze a clothing image and return structured fashion metadata. It provides
+an example input and output prompt (one shot example). The output (JSON format) includes a predefined structure
+including, items, category, gender 
+"""
+
+# 3P Imports
 from openai import OpenAI
+
+# Local Application Imports
+from config import GPT_MODEL
+
+# Initialize OpenAI client
 client = OpenAI()
 
-GPT_MODEL = "gpt-4o-mini"  # or "gpt-4o-mini" if you're using that for cost control
+# Includes example of expected output, to future clarify expected output. 
 
 def analyze_image(image_base64, subcategories):
     response = client.chat.completions.create(

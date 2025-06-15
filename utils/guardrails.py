@@ -1,7 +1,17 @@
+"""
+guardrails.py
+Contains business logic filters and constraints used to refine matching results. Initial 
+images are sent back to the model and asked if they are relevant (Yes/No) and provide justification.
+"""
+
+# 3P Imports
 from openai import OpenAI
 
+# Local Application Imports
+from config import GPT_MODEL
+
+# Initialize OpenAI client 
 client = OpenAI()
-GPT_MODEL = "gpt-4o-mini" 
 
 def check_match(reference_image_base64, suggested_image_base64):
     response = client.chat.completions.create(
