@@ -22,8 +22,5 @@ from openai import OpenAI
 # Local Application Imports
 from config import GPT_MODEL, EMBEDDING_MODEL
 
-# Initialize OpenAI client
+# Initialize OpenAI client - Need to add API key
 client = OpenAI()
-
-
-
