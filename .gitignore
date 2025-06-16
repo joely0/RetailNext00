@@ -1,0 +1,22 @@
+# Ignore Python bytecode and cache
+__pycache__/
+*.py[cod]
+
+# Ignore virtual environments
+.venv/
+env/
+venv/
+
+# Ignore environment variable files
+.env
+
+# VS Code settings (optional, project-specific)
+.vscode/
+
+# Ignore log and temp files
+*.log
+*.tmp
+*.swp
+
+# macOS system files
+.DS_Store
