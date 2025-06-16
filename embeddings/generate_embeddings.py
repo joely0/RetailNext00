@@ -1,6 +1,6 @@
 """
 generate_embeddings.py
-Generates OpenAI embeddings for a product catalog using the `text-embedding-3-large` model.
+Generates OpenAI embeddings for a product catalog using the `text-embedding-3-large` configured in config.py model.
 """
 
 # Standard library

@@ -1,4 +1,7 @@
-# Python config file
+"""
+config.py
+Contains basic OpenAI configs
+"""
 
 GPT_MODEL = "gpt-4o-mini"
 EMBEDDING_MODEL = "text-embedding-3-large"

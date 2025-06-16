@@ -18,7 +18,8 @@ from config import EMBEDDING_MODEL
 # Initialize OpenAI client
 client = OpenAI()
 
-# Retry-enabled embedding function
+# Simple function to take in a list of text objects and return them as a list of embeddings
+
 @retry(wait=wait_random_exponential(min=1, max=40), stop=stop_after_attempt(10))
 
 def get_embeddings(input: List):
