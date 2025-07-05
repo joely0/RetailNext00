@@ -48,7 +48,16 @@ unique_subcategories = styles_df['articleType'].unique()
 
 # Analyze the image and return the results
 analysis = analyze_image(encoded_image, unique_subcategories)
-image_analysis = json.loads(analysis)
+if analysis is None:
+    print("Error: Failed to analyze image")
+    exit(1)
+
+try:
+    image_analysis = json.loads(analysis)
+except (json.JSONDecodeError, TypeError) as e:
+    print(f"Error parsing analysis result: {e}")
+    print(f"Raw analysis result: {analysis}")
+    exit(1)
 
 # Display the image and the analysis results
 display(Image(filename=reference_image))
@@ -99,7 +108,17 @@ for path in paths:
     suggested_image = encode_image_to_base64(path)
     
     # Check if the items match
-    match = json.loads(check_match(encoded_image, suggested_image))
+    match_result = check_match(encoded_image, suggested_image)
+    if match_result is None:
+        print(f"Error: Failed to check match for {path}")
+        continue
+        
+    try:
+        match = json.loads(match_result)
+    except (json.JSONDecodeError, TypeError) as e:
+        print(f"Error parsing match result for {path}: {e}")
+        print(f"Raw match result: {match_result}")
+        continue
     
     # Display the image and the analysis results
     if match["answer"] == 'yes':

@@ -1,5 +1,5 @@
 """
-match_from_image.py
+image_match.py
 Filters product catalog based on gender and category, then retrieves and displays visually similar items
 using embeddings and image captions generated from an input image.
 """

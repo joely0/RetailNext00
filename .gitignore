@@ -19,4 +19,4 @@ venv/
 *.swp
 
 # macOS system files
-.DS_Store
+.DS_Storedata/sample_clothes/sample_styles_with_embeddings.csv
