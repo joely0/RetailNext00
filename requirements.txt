@@ -3,3 +3,4 @@ openai
 ipython
 tiktoken
 tenacity
+streamlit

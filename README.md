@@ -23,15 +23,38 @@ pip install -r requirements.txt
 
 ## ▶Usage
 
+### Command Line Demo
 ```bash
 python run_demo.py
 ```
+
+### Web Interface (Recommended)
+```bash
+streamlit run app.py
+```
+
+The Streamlit app provides a user-friendly interface where you can:
+- Upload clothing images
+- View AI analysis results
+- See matching item recommendations
+- Validate matches with guardrails
+
+## Features
+
+- **GPT-4o mini** for multimodal image analysis
+- **RAG (Retrieval-Augmented Generation)** for similarity search
+- **Embeddings** using OpenAI's text-embedding-3-large
+- **Guardrails** for quality control and validation
+- **Streamlit UI** for easy interaction
+- **Error handling** for robust operation
 
 ## Folder Structure
 
 ```
 RetailNext00/
 ├── main.py
+├── app.py                    # Streamlit web interface
+├── run_demo.py              # Command line demo
 ├── config.py
 ├── requirements.txt
 │
@@ -52,10 +75,15 @@ RetailNext00/
 │       ├── sample_styles.csv
 │       └── sample_styles_with_embeddings.csv
 │
-├── run_demo.py
 └── README.md
 ```
 
+## Technology Stack
+
+- **OpenAI API**: GPT-4o mini, text-embedding-3-large
+- **Python**: pandas, numpy, streamlit
+- **Machine Learning**: cosine similarity, embeddings
+- **Web Framework**: Streamlit for UI
 
 ## License
 

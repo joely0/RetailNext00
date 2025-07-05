@@ -16,6 +16,7 @@ import io
 from analysis import analyze_image
 from utils.guardrails import check_match
 from match.search_similar_items import find_matching_items_with_rag
+from config import OPENAI_API_KEY
 
 # Page configuration
 st.set_page_config(
@@ -23,6 +24,28 @@ st.set_page_config(
     page_icon="👗",
     layout="wide"
 )
+
+# Check for API key
+if not OPENAI_API_KEY:
+    st.error("""
+    ⚠️ **OpenAI API Key Not Found**
+    
+    Please set your OpenAI API key as an environment variable:
+    
+    **For Local Development:**
+    ```bash
+    export OPENAI_API_KEY="your-api-key-here"
+    ```
+    
+    **For Streamlit Cloud Deployment:**
+    1. Go to your app settings in Streamlit Cloud
+    2. Add environment variable: `OPENAI_API_KEY`
+    3. Set the value to your API key
+    4. Redeploy the app
+    
+    Get your API key from: https://platform.openai.com/api-keys
+    """)
+    st.stop()
 
 # Title and description
 st.title("👗 Fashion Matchmaker")
@@ -104,7 +127,7 @@ def main():
                         # Analyze the image
                         analysis = analyze_image(encoded_image, unique_subcategories)
                         if analysis is None:
-                            st.error("Failed to analyze image. Please try again.")
+                            st.error("Failed to analyze image. Please check your API key and try again.")
                             return
                         
                         try:

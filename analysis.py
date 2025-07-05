@@ -10,14 +10,20 @@ including, items, category, gender
 from openai import OpenAI
 
 # Local Application Imports
-from config import GPT_MODEL
+from config import GPT_MODEL, OPENAI_API_KEY
 
 # Initialize OpenAI client
-client = OpenAI()
+if OPENAI_API_KEY:
+    client = OpenAI(api_key=OPENAI_API_KEY)
+else:
+    client = None
 
 # Includes example of expected output, to future clarify expected output. 
 
 def analyze_image(image_base64, subcategories):
+    if not client:
+        return None
+        
     response = client.chat.completions.create(
         model=GPT_MODEL,
         messages=[

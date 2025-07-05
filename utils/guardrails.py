@@ -8,12 +8,18 @@ images are sent back to the model and asked if they are relevant (Yes/No) and pr
 from openai import OpenAI
 
 # Local Application Imports
-from config import GPT_MODEL
+from config import GPT_MODEL, OPENAI_API_KEY
 
 # Initialize OpenAI client 
-client = OpenAI()
+if OPENAI_API_KEY:
+    client = OpenAI(api_key=OPENAI_API_KEY)
+else:
+    client = None
 
 def check_match(reference_image_base64, suggested_image_base64):
+    if not client:
+        return None
+        
     response = client.chat.completions.create(
         model=GPT_MODEL,
         messages=[

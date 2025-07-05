@@ -13,16 +13,22 @@ from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 
 # Local application imports
-from config import EMBEDDING_MODEL
+from config import EMBEDDING_MODEL, OPENAI_API_KEY
 
 # Initialize OpenAI client
-client = OpenAI()
+if OPENAI_API_KEY:
+    client = OpenAI(api_key=OPENAI_API_KEY)
+else:
+    client = None
 
 # Simple function to take in a list of text objects and return them as a list of embeddings
 
 @retry(wait=wait_random_exponential(min=1, max=40), stop=stop_after_attempt(10))
 
 def get_embeddings(input: List):
+    if not client:
+        return None
+        
     response = client.embeddings.create(
         input=input,
         model=EMBEDDING_MODEL
@@ -76,6 +82,9 @@ def find_matching_items_with_rag(df_items, item_descs):
     for desc in item_descs:
         # Generate the embedding for the input item
         input_embedding = get_embeddings([desc])
+        
+        if input_embedding is None:
+            continue
 
         # Find the most similar items based on cosine similarity
         similar_indices = find_similar_items(input_embedding, embeddings, threshold=0.6)
