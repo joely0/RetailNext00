@@ -130,7 +130,7 @@ def main():
         if uploaded_file is not None:
             # Display uploaded image
             image = Image.open(uploaded_file)
-            st.image(image, caption="Uploaded Image", use_column_width=True)
+            st.image(image, caption="Uploaded Image", use_container_width=True)
             
             # Analyze button
             if st.button("🔍 Analyze & Find Matches", type="primary"):
@@ -234,7 +234,7 @@ def main():
                     image_path = f"../openai-cookbook/examples/data/sample_clothes/sample_images/{item_id}.jpg"
                     
                     if os.path.exists(image_path):
-                        st.image(image_path, caption=f"ID: {item_id}", use_column_width=True)
+                        st.image(image_path, caption=f"ID: {item_id}", use_container_width=True)
                     else:
                         st.write(f"Image not found for ID: {item_id}")
                     
