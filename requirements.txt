@@ -4,3 +4,4 @@ ipython
 tiktoken
 tenacity
 streamlit
+google-cloud-storage

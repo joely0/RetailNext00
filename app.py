@@ -17,6 +17,7 @@ from analysis import analyze_image
 from utils.guardrails import check_match
 from match.search_similar_items import find_matching_items_with_rag
 from config import OPENAI_API_KEY
+from utils.gcs_download import load_embeddings_with_gcs_fallback
 
 # Page configuration
 st.set_page_config(
@@ -57,14 +58,18 @@ This app uses GPT-4o mini to analyze your clothing and find matching items.
 # Load the dataset with embeddings
 @st.cache_data
 def load_data():
-    """Load the clothing dataset with embeddings"""
+    """Load the clothing dataset with embeddings from GCS or local file"""
+    
+    # Get GCS configuration from environment variables
+    bucket_name = os.getenv("GCS_BUCKET_NAME")
+    blob_name = os.getenv("GCS_BLOB_NAME", "data/sample_styles_with_embeddings.csv")
+    
     try:
-        styles_df = pd.read_csv("data/sample_clothes/sample_styles_with_embeddings.csv", on_bad_lines="skip")
-        # Convert the 'embeddings' column from string to list of floats
-        styles_df["embeddings"] = styles_df["embeddings"].apply(ast.literal_eval)
+        # Try to load with GCS fallback
+        styles_df = load_embeddings_with_gcs_fallback(bucket_name, blob_name)
         return styles_df
-    except FileNotFoundError:
-        st.error("Dataset file not found. Please ensure the embeddings file exists.")
+    except Exception as e:
+        st.error(f"Error loading dataset: {e}")
         return None
 
 def encode_image_to_base64(image):
@@ -89,12 +94,21 @@ def main():
         - **RAG** for similarity search
         - **Embeddings** for matching
         - **Guardrails** for quality control
+        - **GCS Integration** for data storage
         """)
         
         st.header("📊 Dataset Info")
         st.write(f"Total items: {len(styles_df)}")
         st.write(f"Categories: {len(styles_df['articleType'].unique())}")
         st.write(f"Genders: {styles_df['gender'].unique().tolist()}")
+        
+        # Show data source
+        if os.path.exists("data/sample_clothes/sample_styles_with_embeddings.csv"):
+            st.info("📁 Using local embeddings file")
+        elif os.getenv("GCS_BUCKET_NAME"):
+            st.info("☁️ Using Google Cloud Storage")
+        else:
+            st.info("📝 Using sample demo data")
     
     # Main content area
     col1, col2 = st.columns([1, 1])
