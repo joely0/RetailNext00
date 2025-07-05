@@ -73,6 +73,21 @@ def load_data():
         st.error(f"Error loading dataset: {e}")
         return None
 
+def get_data_source():
+    """Determine the actual data source being used"""
+    local_path = "data/sample_clothes/sample_styles_with_embeddings.csv"
+    public_url = os.getenv("GCS_PUBLIC_URL")
+    bucket_name = os.getenv("GCS_BUCKET_NAME")
+    
+    if os.path.exists(local_path):
+        return "local"
+    elif public_url:
+        return "gcs_public"
+    elif bucket_name:
+        return "gcs_bucket"
+    else:
+        return "sample"
+
 def encode_image_to_base64(image):
     """Convert PIL image to base64 string"""
     buffered = io.BytesIO()
@@ -105,10 +120,13 @@ def main():
             st.write(f"Genders: {sorted(styles_df['gender'].unique().tolist())}")
             
             # Show data source
-            if os.path.exists("data/sample_clothes/sample_styles_with_embeddings.csv"):
+            data_source = get_data_source()
+            if data_source == "local":
                 st.info("📁 Using local embeddings file")
-            elif os.getenv("GCS_PUBLIC_URL"):
-                st.info("☁️ Using Google Cloud Storage")
+            elif data_source == "gcs_public":
+                st.info("☁️ Using Google Cloud Storage (Public URL)")
+            elif data_source == "gcs_bucket":
+                st.info("☁️ Using Google Cloud Storage (Bucket)")
             else:
                 st.info("📝 Using sample demo data")
         else:
