@@ -63,10 +63,11 @@ def load_data():
     # Get GCS configuration from environment variables
     bucket_name = os.getenv("GCS_BUCKET_NAME")
     blob_name = os.getenv("GCS_BLOB_NAME", "data/sample_styles_with_embeddings.csv")
+    public_url = os.getenv("GCS_PUBLIC_URL", "https://storage.googleapis.com/retailnext00/sample_styles_with_embeddings.csv")
     
     try:
         # Try to load with GCS fallback
-        styles_df = load_embeddings_with_gcs_fallback(bucket_name, blob_name)
+        styles_df = load_embeddings_with_gcs_fallback(bucket_name, blob_name, public_url)
         return styles_df
     except Exception as e:
         st.error(f"Error loading dataset: {e}")
@@ -98,17 +99,20 @@ def main():
         """)
         
         st.header("📊 Dataset Info")
-        st.write(f"Total items: {len(styles_df)}")
-        st.write(f"Categories: {len(styles_df['articleType'].unique())}")
-        st.write(f"Genders: {styles_df['gender'].unique().tolist()}")
-        
-        # Show data source
-        if os.path.exists("data/sample_clothes/sample_styles_with_embeddings.csv"):
-            st.info("📁 Using local embeddings file")
-        elif os.getenv("GCS_BUCKET_NAME"):
-            st.info("☁️ Using Google Cloud Storage")
+        if styles_df is not None:
+            st.write(f"Total items: {len(styles_df)}")
+            st.write(f"Categories: {len(styles_df['articleType'].unique())}")
+            st.write(f"Genders: {sorted(styles_df['gender'].unique().tolist())}")
+            
+            # Show data source
+            if os.path.exists("data/sample_clothes/sample_styles_with_embeddings.csv"):
+                st.info("📁 Using local embeddings file")
+            elif os.getenv("GCS_PUBLIC_URL"):
+                st.info("☁️ Using Google Cloud Storage")
+            else:
+                st.info("📝 Using sample demo data")
         else:
-            st.info("📝 Using sample demo data")
+            st.error("Dataset not loaded")
     
     # Main content area
     col1, col2 = st.columns([1, 1])

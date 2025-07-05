@@ -4,9 +4,34 @@ Downloads embeddings file from GCS bucket for deployment
 """
 
 import os
+import requests
 from google.cloud import storage
 import pandas as pd
 import ast
+
+def download_embeddings_from_public_url(url, destination_file_name):
+    """
+    Download embeddings file from public GCS URL
+    
+    Args:
+        url: Public GCS URL
+        destination_file_name: Local path to save file
+    """
+    try:
+        # Download from public URL
+        response = requests.get(url)
+        response.raise_for_status()  # Raise exception for bad status codes
+        
+        # Save to local file
+        with open(destination_file_name, 'wb') as f:
+            f.write(response.content)
+        
+        print(f"✅ Downloaded from {url} to {destination_file_name}")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error downloading from public URL: {e}")
+        return False
 
 def download_embeddings_from_gcs(bucket_name, source_blob_name, destination_file_name):
     """
@@ -35,13 +60,14 @@ def download_embeddings_from_gcs(bucket_name, source_blob_name, destination_file
         print(f"❌ Error downloading from GCS: {e}")
         return False
 
-def load_embeddings_with_gcs_fallback(bucket_name=None, blob_name=None):
+def load_embeddings_with_gcs_fallback(bucket_name=None, blob_name=None, public_url=None):
     """
     Load embeddings file with fallback to GCS if local file doesn't exist
     
     Args:
         bucket_name: GCS bucket name (optional)
         blob_name: Path to file in bucket (optional)
+        public_url: Public GCS URL (optional)
     """
     local_path = "data/sample_clothes/sample_styles_with_embeddings.csv"
     
@@ -55,8 +81,19 @@ def load_embeddings_with_gcs_fallback(bucket_name=None, blob_name=None):
         except Exception as e:
             print(f"❌ Error loading local file: {e}")
     
+    # Try to download from public URL first
+    if public_url:
+        print("☁️ Attempting to download from public GCS URL...")
+        if download_embeddings_from_public_url(public_url, local_path):
+            try:
+                styles_df = pd.read_csv(local_path, on_bad_lines="skip")
+                styles_df["embeddings"] = styles_df["embeddings"].apply(ast.literal_eval)
+                return styles_df
+            except Exception as e:
+                print(f"❌ Error loading downloaded file: {e}")
+    
     # Try to download from GCS if credentials are available
-    if bucket_name and blob_name:
+    elif bucket_name and blob_name:
         print("☁️ Attempting to download from Google Cloud Storage...")
         if download_embeddings_from_gcs(bucket_name, blob_name, local_path):
             try:
